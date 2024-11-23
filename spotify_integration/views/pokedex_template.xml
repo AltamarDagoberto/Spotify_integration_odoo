@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <!-- templates/pokemon_list.xml -->
+
+        <template id="spotify_integration.pokemon_list">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+            <style>
+                /* static/src/css/pokemon.css */
+
+                /* General */
+                .container {
+                font-family: 'Arial', sans-serif;
+                }
+
+                /* Tarjetas */
+                .card {
+                border-radius: 15px;
+                overflow: hidden;
+                transition: transform 0.3s, box-shadow 0.3s;
+                }
+                .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+                }
+                .card-header {
+                font-size: 1.2rem;
+                font-weight: bold;
+                }
+
+                /* Imágenes */
+                .card-img-top {
+                max-height: 200px;
+                object-fit: contain;
+                }
+
+                /* Badges */
+                .badge {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.6rem;
+                }
+
+                /* Lista de estadísticas */
+                .list-group-item {
+                border: none;
+                font-size: 1rem;
+                }
+                .list-group-item span {
+                font-weight: bold;
+                }
+
+
+            </style>
+
+            <div class="container mt-5">
+                <h1 class="text-center mb-4">Pokédex</h1>
+                <div class="row justify-content-center mb-3">
+                    <div class="col-md-6">
+                        <select id="filter" class="form-select">
+                            <option value="All" t-att-selected="'selected' if selected_rarity == 'All' else ''">All
+                            </option>
+                            <t t-foreach="types" t-as="type">
+                                <option t-att-value="type"
+                                        t-att-selected="'selected' if selected_rarity == type else ''">
+                                    <t t-esc="type.capitalize()"/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                </div>
+                <div class="row" id="pokemon-list">
+                    <t t-foreach="pokemons" t-as="pokemon">
+                        <div class="col-md-4 col-lg-3 mb-4">
+                            <a t-att-href="'/pokemon/%s' % pokemon['url'].split('/')[-2]" class="text-decoration-none">
+                                <div class="card shadow-sm text-center">
+                                    <div class="card-header bg-light">
+                                        <h5 class="card-title mb-0" t-esc="pokemon['name'].capitalize()"/>
+                                    </div>
+                                    <img t-att-src="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/%s.png' % pokemon['url'].split('/')[-2]"
+                                         class="card-img-top img-fluid p-3" alt="Pokemon Image"/>
+                                </div>
+                            </a>
+                        </div>
+                    </t>
+                </div>
+                <!-- Paginación -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <t t-foreach="range(1, total_pages+1)" t-as="i">
+                            <li class="page-item" t-att-class="'active' if page == i else ''">
+                                <a class="page-link" t-att-data-page="i" href="#">
+                                    <t t-esc="i"/>
+                                </a>
+                            </li>
+                        </t>
+                    </ul>
+                </nav>
+            </div>
+        </template>
+
+        <!-- templates/pokemon_detail.xml -->
+        <template id="spotify_integration.pokemon_detail">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+            <style>
+                /* static/src/css/pokemon.css */
+
+                /* General */
+                .container {
+                font-family: 'Arial', sans-serif;
+                }
+
+                /* Tarjetas */
+                .card {
+                border-radius: 15px;
+                overflow: hidden;
+                transition: transform 0.3s, box-shadow 0.3s;
+                }
+                .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+                }
+                .card-header {
+                font-size: 1.2rem;
+                font-weight: bold;
+                }
+
+                /* Imágenes */
+                .card-img-top {
+                max-height: 200px;
+                object-fit: contain;
+                }
+
+                /* Badges */
+                .badge {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.6rem;
+                }
+
+                /* Lista de estadísticas */
+                .list-group-item {
+                border: none;
+                font-size: 1rem;
+                }
+                .list-group-item span {
+                font-weight: bold;
+                }
+
+
+            </style>
+            <div class="container mt-5">
+                <a href="/pokemon" class="btn btn-primary mb-3">Back to Pokédex</a>
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <img t-att-src="pokemon['image']" class="img-fluid" alt="Pokemon Image"/>
+                    </div>
+                    <div class="col-md-6">
+                        <h2>
+                            <t t-esc="pokemon['name']"/>
+                        </h2>
+                        <p>
+                            <t t-foreach="pokemon['types']" t-as="type">
+                                <span t-esc="type.capitalize()" class="badge bg-primary me-2"></span>
+                            </t>
+                        </p>
+                        <h4>About</h4>
+                        <p>
+                            <strong>Height:</strong>
+                            <t t-esc="pokemon['height']"/>
+                            dm
+                        </p>
+                        <p>
+                            <strong>Weight:</strong>
+                            <t t-esc="pokemon['weight']"/>
+                            hg
+                        </p>
+                        <h4>Base Stats</h4>
+                        <ul>
+                            <t t-foreach="pokemon['stats'].items()" t-as="stat">
+                                <li>
+                                    <strong><t t-esc="stat[0].capitalize()"/>:
+                                    </strong>
+                                    <t t-esc="stat[1]"/>
+                                </li>
+                            </t>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+
+    </data>
+</odoo>

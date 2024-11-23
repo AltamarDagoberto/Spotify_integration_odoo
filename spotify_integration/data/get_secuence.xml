@@ -1,0 +1,11 @@
+<odoo>
+    <data noupdate="1">
+        <record id="seq_lk_spotify" model="ir.sequence">
+            <field name="name">Spotify Integration</field>
+            <field name="code">lk.spotify</field>
+            <field name="prefix">SPOTIFY-</field>
+            <field name="padding">5</field> <!-- Número de dígitos que tendrá el contador -->
+            <field name="number_increment">1</field> <!-- Incremento de la secuencia -->
+        </record>
+    </data>
+</odoo>

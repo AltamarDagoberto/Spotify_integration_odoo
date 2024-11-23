@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Top menu item -->
+        <menuitem name="Integracion" id="menu_principal"/>
+        <!-- menu categories -->
+        <menuitem name="Integracion spotify" id="spotify_integration.spotify" sequence="1" parent="menu_principal"
+                  action="spotify_integration.action_window_lk_spotify"/>
+
+    </data>
+</odoo>
