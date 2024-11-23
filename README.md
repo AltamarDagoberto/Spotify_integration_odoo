@@ -68,3 +68,8 @@ Campos:
   
 # Métodos:
 create_playlist(): Crea la nueva playlist en Spotify a través de la integración.
+
+![222](https://github.com/user-attachments/assets/367f68a3-a7b2-469b-bf1c-5f4fef51d134)
+# IMAGEN DE LAS CANCIONES
+![image](https://github.com/user-attachments/assets/cab4c67a-cd73-45fa-8f0e-ccbde0b678fb)
+
