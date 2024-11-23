@@ -1,0 +1,1 @@
+# Spotify_integration_odoo
