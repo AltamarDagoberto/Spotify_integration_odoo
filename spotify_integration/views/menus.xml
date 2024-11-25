@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <!-- Top menu item -->
-        <menuitem name="Integracion" id="menu_principal"/>
-        <!-- menu categories -->
-        <menuitem name="Integracion spotify" id="spotify_integration.spotify" sequence="1" parent="menu_principal"
-                  action="spotify_integration.action_window_lk_spotify"/>
-
-    </data>
+    <record model="ir.actions.act_window" id="action_window_lk_spotify">
+        <field name="name">Spotify Playlists</field>
+        <field name="res_model">lk.spotify</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!-- Top menu item -->
+    <menuitem name="Integracion" id="menu_principal_spotify"/>
+    <!-- menu categories -->
+    <menuitem name="Integracion spotify" id="menu_spotify" sequence="1" parent="menu_principal_spotify"
+                action="action_window_lk_spotify"/>
 </odoo>
