@@ -7,6 +7,42 @@
 
         <template id="spotify_integration.pokemon_list">
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+            <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+            <script src=" https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!--            <script type="text/javascript" src="/spotify_integration/static/src/js/pokedex.js"></script>-->
+
+
+            <script>
+
+                    document.addEventListener('DOMContentLoaded', function () {
+                    const filterElement = document.getElementById('filter');
+
+                    filterElement.addEventListener('change', function () {
+                    const selectedType = filterElement.value;
+
+                    // Llama al servidor para obtener la nueva lista de Pokémon
+                    fetch(`/pokemon?rarity=${selectedType}`)
+                    .then(response => response.text())
+                    .then(html => {
+                    // Reemplaza el contenido de la lista de Pokémon
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newList = doc.getElementById('pokemon-list');
+                    document.getElementById('pokemon-list').innerHTML = newList.innerHTML;
+
+                    // Actualiza la paginación si es necesario
+                    const newPagination = doc.querySelector('.pagination');
+                    const paginationContainer = document.querySelector('.pagination');
+                    if (newPagination &amp;&amp; paginationContainer) {
+                    paginationContainer.innerHTML = newPagination.innerHTML;
+                    }
+                    })
+                    .catch(err => console.error('Error al obtener los Pokémon:', err));
+                    });
+                    });
+                </script>
+
+
             <style>
                 /* static/src/css/pokemon.css */
 
@@ -74,6 +110,7 @@
                     <t t-foreach="pokemons" t-as="pokemon">
                         <div class="col-md-4 col-lg-3 mb-4">
                             <a t-att-href="'/pokemon/%s' % pokemon['url'].split('/')[-2]" class="text-decoration-none">
+
                                 <div class="card shadow-sm text-center">
                                     <div class="card-header bg-light">
                                         <h5 class="card-title mb-0" t-esc="pokemon['name'].capitalize()"/>
@@ -100,91 +137,168 @@
             </div>
         </template>
 
-        <!-- templates/pokemon_detail.xml -->
+
         <template id="spotify_integration.pokemon_detail">
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+            <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+            <script src=" https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
             <style>
-                /* static/src/css/pokemon.css */
-
-                /* General */
-                .container {
-                font-family: 'Arial', sans-serif;
-                }
-
-                /* Tarjetas */
-                .card {
+                /* Ajustes generales */
+                .pokemon-card {
+                position: relative;
                 border-radius: 15px;
+                padding: 30px 20px;
                 overflow: hidden;
-                transition: transform 0.3s, box-shadow 0.3s;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
                 }
-                .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+                .bg-water { background-color: #0099FF; }
+                .bg-fire { background-color: #FF4500; }
+                .bg-grass { background-color: #00FF00; }
+                .bg-electric { background-color: #FFD700; }
+                .bg-default { background-color: #888888; }
+
+                /* Encabezado con fondo dinámico */
+                .pokemon-header {
+                color: white;
+                text-align: center;
+                padding: 100px 20px 30px;
+                margin-top: 67px;
+                border-radius: 15px 15px 0 0;
                 }
-                .card-header {
+
+                /* Imagen del Pokémon */
+                .pokemon-image {
+                position: absolute;
+                top: -50px;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 2;
+                margin-top: 39px;
+                width: 241px;
+                height: auto;
+                }
+
+                /* Estilo de los íconos */
+                .icon-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
                 font-size: 1.2rem;
+                }
+
+                .icon-container i {
+                font-size: 1.5rem;
+                color: #ffa500;
+                }
+
+                /* Estadísticas */
+                .stats-section {
+                margin-top: 20px;
+                }
+
+                .stats-title {
+                font-size: 1.5rem;
+                color: #333;
+                text-align: center;
+                margin-bottom: 10px;
+                }
+
+                .stats-bar-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 10px;
+                }
+
+                .stats-bar-label {
+                width: 100px;
+                text-align: right;
                 font-weight: bold;
                 }
 
-                /* Imágenes */
-                .card-img-top {
-                max-height: 200px;
-                object-fit: contain;
+                .stats-bar {
+                flex: 1;
+                height: 10px;
+                background-color: #e0e0e0;
+                border-radius: 5px;
+                overflow: hidden;
                 }
 
-                /* Badges */
-                .badge {
-                font-size: 0.9rem;
-                padding: 0.4rem 0.6rem;
+                .stats-bar-fill {
+                height: 100%;
+                background-color: #ffa500;
                 }
 
-                /* Lista de estadísticas */
-                .list-group-item {
-                border: none;
-                font-size: 1rem;
+                /* Botón de regreso */
+                .back-btn {
+                margin-top: 20px;
+                display: block;
+                text-align: center;
                 }
-                .list-group-item span {
-                font-weight: bold;
-                }
-
-
             </style>
+            <a href="/pokemon" class="btn btn-secondary back-btn">Back to Pokédex</a>
+
             <div class="container mt-5">
-                <a href="/pokemon" class="btn btn-primary mb-3">Back to Pokédex</a>
-                <div class="row">
-                    <div class="col-md-6 text-center">
-                        <img t-att-src="pokemon['image']" class="img-fluid" alt="Pokemon Image"/>
-                    </div>
-                    <div class="col-md-6">
-                        <h2>
+                <!-- Botón para regresar -->
+
+                <!-- Tarjeta de detalles -->
+                <div class="pokemon-card">
+                    <!-- Encabezado con fondo dinámico -->
+                    <div t-attf-class="pokemon-header bg-{{ pokemon['types'][0].lower() }}">
+
+                        <img t-att-src="pokemon['image']" class="pokemon-image" alt="Pokemon Image"/>
+                        <h1 class="text-center">
                             <t t-esc="pokemon['name']"/>
-                        </h2>
-                        <p>
+                        </h1>
+                        <div>
                             <t t-foreach="pokemon['types']" t-as="type">
-                                <span t-esc="type.capitalize()" class="badge bg-primary me-2"></span>
+                                <span class="badge bg-primary mx-1">
+                                    <t t-esc="type.capitalize()"/>
+                                </span>
                             </t>
-                        </p>
-                        <h4>About</h4>
-                        <p>
-                            <strong>Height:</strong>
-                            <t t-esc="pokemon['height']"/>
-                            dm
-                        </p>
-                        <p>
-                            <strong>Weight:</strong>
-                            <t t-esc="pokemon['weight']"/>
-                            hg
-                        </p>
-                        <h4>Base Stats</h4>
-                        <ul>
-                            <t t-foreach="pokemon['stats'].items()" t-as="stat">
-                                <li>
-                                    <strong><t t-esc="stat[0].capitalize()"/>:
-                                    </strong>
-                                    <t t-esc="stat[1]"/>
-                                </li>
-                            </t>
-                        </ul>
+                        </div>
+                    </div>
+
+                    <!-- Detalles del Pokémon -->
+                    <div class="row mt-5">
+                        <div class="col-6 text-center icon-container">
+                            <i class="bi bi-bar-chart"></i>
+                            <div>
+                                <h5>Weight</h5>
+                                <p>
+                                    <t t-esc="pokemon['weight']"/>
+                                    hg
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-6 text-center icon-container">
+                            <i class="bi bi-rulers"></i>
+                            <div>
+                                <h5>Height</h5>
+                                <p>
+                                    <t t-esc="pokemon['height']"/>
+                                    dm
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estadísticas -->
+                    <div class="stats-section">
+                        <h3 class="stats-title">Base Stats</h3>
+                        <div t-foreach="pokemon['stats'].items()" t-as="stat" class="stats-bar-container">
+                            <div class="stats-bar-label">
+                                <t t-esc="stat[0].capitalize()"/>
+                            </div>
+                            <div class="stats-bar">
+                                <div class="stats-bar-fill" t-att-style="'width: {}%;'.format(stat[1])"></div>
+
+                            </div>
+                            <span>
+                                <t t-esc="stat[1]"/>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
